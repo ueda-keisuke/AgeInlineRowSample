@@ -42,6 +42,14 @@ class ViewController: FormViewController {
                 $0.title = "Date"
         }
         
+            <<< PickerRow<String>("Picker Row") { (row : PickerRow<String>) -> Void in
+                
+                row.options = []
+                for i in 1...10{
+                    row.options.append("option \(i)")
+                }
+                
+        }
         
         //            <<< AgeInlineRow("Age") { (row: AgeInlineRow) -> Void in
         //
