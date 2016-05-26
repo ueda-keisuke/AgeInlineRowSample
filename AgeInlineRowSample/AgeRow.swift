@@ -8,7 +8,7 @@
 
 import Eureka
 
-public class AgePickerCell: Cell<Int>, CellType, UIPickerViewDataSource, UIPickerViewDelegate {
+public class AgePickerCell: Cell<String>, CellType, UIPickerViewDataSource, UIPickerViewDelegate {
     
     public lazy var picker: UIPickerView = { [unowned self] in
         let picker = UIPickerView()
@@ -158,14 +158,15 @@ public class AgePickerCell: Cell<Int>, CellType, UIPickerViewDataSource, UIPicke
         }
         
         // call onChange
-        if let row = pickerRow, let year = pickerRow?.year_value, let month = pickerRow?.month_value {
-            row.value = (year + 1) * (month + 1)
+        if let row = pickerRow, let y = pickerRow?.year_value, let m = pickerRow?.month_value {
+            
+            row.value = "\(y) year\(y >= 2 ? "s" : "") and \(m) month\(m >= 2 ? "s" : "") old."
         }
     }
 }
 
 
-public final class AgePickerRow: Row<Int, AgePickerCell>, RowType {
+public final class AgePickerRow: Row<String, AgePickerCell>, RowType {
     
     public var year_options = [Int]()
     public var month_options = [Int]()
@@ -178,53 +179,7 @@ public final class AgePickerRow: Row<Int, AgePickerCell>, RowType {
     }
 }
 
-public class _AgeInlineRow: Row<Int, AgeInlineCell> {
-    
-    public typealias InlineRow = AgePickerRow
-    public var year_options = [Int]()
-    public var month_options = [Int]()
-    public var noValueDisplayText: String?
-    
-    var year_value: Int?
-    var month_value: Int?
-    
-    required public init(tag: String?) {
-        super.init(tag: tag)
-    }
-}
-
-/*
- 
- public final class AgeInlineRow: _AgeInlineRow, RowType, InlineRowType {
- 
- required public init(tag: String?) {
- super.init(tag: tag)
- onExpandInlineRow { cell, row, _ in
- let color = cell.detailTextLabel?.textColor
- row.onCollapseInlineRow { cell, _, _ in
- cell.detailTextLabel?.textColor = color
- }
- cell.detailTextLabel?.textColor = cell.tintColor
- }
- }
- 
- public override func customDidSelect() {
- super.customDidSelect()
- if !isDisabled {
- toggleInlineRow()
- }
- }
- 
- public func setupInlineRow(inlineRow: InlineRow) {
- inlineRow.year_options = self.year_options
- inlineRow.month_options = self.month_options
- inlineRow.displayValueFor = self.displayValueFor
- }
- }
- 
- */
-
-public class AgeInlineCell: Cell<Int>, CellType {
+public class AgeInlineCell: Cell<String>, CellType {
     
     var year_value: Int?
     var month_value: Int?
@@ -251,3 +206,60 @@ public class AgeInlineCell: Cell<Int>, CellType {
         row.deselect()
     }
 }
+
+
+public class _AgeInlineRow: Row<String, AgeInlineCell> {
+    
+    public typealias InlineRow = AgePickerRow
+    public var year_options = [Int]()
+    public var month_options = [Int]()
+    public var noValueDisplayText: String?
+    
+    var year_value: Int?
+    var month_value: Int?
+    
+    required public init(tag: String?) {
+        super.init(tag: tag)
+        
+        displayValueFor =  {
+            guard let date = $0 else {
+                return nil
+            }
+            
+            return date
+        }
+    }
+}
+
+
+
+public final class AgeInlineRow_<T>: _AgeInlineRow, RowType, InlineRowType {
+    
+    required public init(tag: String?) {
+        super.init(tag: tag)
+        onExpandInlineRow { cell, row, _ in
+            let color = cell.detailTextLabel?.textColor
+            row.onCollapseInlineRow { cell, _, _ in
+                cell.detailTextLabel?.textColor = color
+            }
+            cell.detailTextLabel?.textColor = cell.tintColor
+        }
+    }
+    
+    public override func customDidSelect() {
+        super.customDidSelect()
+        if !isDisabled {
+            toggleInlineRow()
+        }
+    }
+    
+    public func setupInlineRow(inlineRow: InlineRow) {
+        inlineRow.year_options = self.year_options
+        inlineRow.month_options = self.month_options
+        inlineRow.displayValueFor = self.displayValueFor
+    }
+}
+
+public typealias AgeInlineRow = AgeInlineRow_<String>
+
+

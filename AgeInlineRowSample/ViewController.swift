@@ -40,24 +40,12 @@ class ViewController: FormViewController {
             <<< DateInlineRow("Date") {
                 $0.value = NSDate()
                 $0.title = "Date"
-        }
-        
-            <<< LabelRow("Age") {
-                $0.value = ""
-                $0.title = "Age"
-                $0.onCellSelection { cell, row in
-                    if let r1 = self.form.rowByTag("AgePicker") as? AgePickerRow {
-                        r1.hidden = true
-                    }
-                }
             }
-        
-            <<< AgePickerRow("AgePicker") { (row: AgePickerRow) -> Void in
+            
+            
+            <<< AgeInlineRow("AgePicker") { (row: AgeInlineRow) -> Void in
                 
                 row.title = row.tag
-                
-                row.year_options = []
-                row.month_options = []
                 
                 for i in 0...18 {
                     row.year_options.append(i)
@@ -70,16 +58,7 @@ class ViewController: FormViewController {
                 row.year_value? = row.year_options[0]
                 row.month_value? = row.month_options[0]
                 
-                
-                }.onChange {row in
-                    if let age = self.form.rowByTag("Age") as? LabelRow {
-                        
-                        let y = row.year_value!
-                        let m = row.month_value!
-                        
-                        age.value = "\(y) year\(y >= 2 ? "s" : "") and \(m) month\(m >= 2 ? "s" : "")"
-                        age.reload()
-                    }
+                row.value = "0 year and 0 month old."
         }
     }
 }
