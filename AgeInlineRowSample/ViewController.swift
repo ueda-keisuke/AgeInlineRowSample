@@ -55,10 +55,15 @@ class ViewController: FormViewController {
                     row.month_options.append(i)
                 }
                 
-                row.year_value? = row.year_options[0]
-                row.month_value? = row.month_options[0]
+                row.value?.year = row.year_options[0]
+                row.value?.month = row.month_options[0]
                 
-                row.value = "0 year and 0 month old."
+                let age = Age()
+                age.year = 0
+                age.month = 0
+                
+                row.value = age
+                }.onChange{row in
         }
     }
 }

@@ -1,14 +1,14 @@
 //
-//  AgeRow.swift
-//  slps2
+//  ViewController.swift
+//  AgeInlineRowSample
 //
-//  Created by Neuro Leap on 2016/05/19.
-//  Copyright © 2016年 Neuro Leap. All rights reserved.
+//  Created by keta on 2016/05/20.
+//  Copyright © 2016年 Keisuke Ueda. All rights reserved.
 //
 
 import Eureka
 
-public class AgePickerCell: Cell<String>, CellType, UIPickerViewDataSource, UIPickerViewDelegate {
+public class AgePickerCell: Cell<Age>, CellType, UIPickerViewDataSource, UIPickerViewDelegate {
     
     public lazy var picker: UIPickerView = { [unowned self] in
         let picker = UIPickerView()
@@ -44,11 +44,11 @@ public class AgePickerCell: Cell<String>, CellType, UIPickerViewDataSource, UIPi
         textLabel?.text = nil
         detailTextLabel?.text = nil
         picker.reloadAllComponents()
-        if let selectedValue = pickerRow?.year_value, let index = pickerRow?.year_options.indexOf(selectedValue) {
+        if let selectedValue = pickerRow?.value?.year, let index = pickerRow?.year_options.indexOf(selectedValue) {
             picker.selectRow(index, inComponent: 0, animated: true)
         }
         
-        if let selectedValue = pickerRow?.month_value, let index = pickerRow?.month_options.indexOf(selectedValue) {
+        if let selectedValue = pickerRow?.value?.month, let index = pickerRow?.month_options.indexOf(selectedValue) {
             picker.selectRow(index, inComponent: 1, animated: true)
         }
         
@@ -104,7 +104,7 @@ public class AgePickerCell: Cell<String>, CellType, UIPickerViewDataSource, UIPi
             
         case 1:
             value = "years"
-            if let year = pickerRow?.year_value
+            if let year = pickerRow?.value?.year
             {
                 if year == 0 || year == 1
                 {
@@ -123,7 +123,7 @@ public class AgePickerCell: Cell<String>, CellType, UIPickerViewDataSource, UIPi
             
         case 3:
             value = "months"
-            if let month = pickerRow?.month_value
+            if let month = pickerRow?.value?.month
             {
                 if month == 0 || month == 1
                 {
@@ -142,9 +142,18 @@ public class AgePickerCell: Cell<String>, CellType, UIPickerViewDataSource, UIPi
     
     public func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         
+        let value_of_this_class = self.row.value
+        let value_of_pickerRow = pickerRow?.value
+        
         if component == 0 {
             if let year = pickerRow?.year_options[row] {
-                pickerRow?.year_value = year
+                
+                value_of_pickerRow?.year = year
+                pickerRow?.value = value_of_pickerRow
+                
+                value_of_this_class?.year = year
+                self.row.value = value_of_this_class
+                
                 picker.reloadComponent(1)
             }
         }
@@ -152,37 +161,31 @@ public class AgePickerCell: Cell<String>, CellType, UIPickerViewDataSource, UIPi
         if component == 2
         {
             if let month = pickerRow?.month_options[row] {
-                pickerRow?.month_value = month
+                
+                value_of_pickerRow?.month = month
+                pickerRow?.value = value_of_pickerRow
+                
+                value_of_this_class?.month = month
+                self.row.value = value_of_this_class
+                
                 picker.reloadComponent(3)
             }
-        }
-        
-        // call onChange
-        if let row = pickerRow, let y = pickerRow?.year_value, let m = pickerRow?.month_value {
-            
-            row.value = "\(y) year\(y >= 2 ? "s" : "") and \(m) month\(m >= 2 ? "s" : "") old."
         }
     }
 }
 
 
-public final class AgePickerRow: Row<String, AgePickerCell>, RowType {
+public final class AgePickerRow: Row<Age, AgePickerCell>, RowType {
     
     public var year_options = [Int]()
     public var month_options = [Int]()
-    
-    var year_value: Int? = 0
-    var month_value: Int? = 0
     
     required public init(tag: String?) {
         super.init(tag: tag)
     }
 }
 
-public class AgeInlineCell: Cell<String>, CellType {
-    
-    var year_value: Int?
-    var month_value: Int?
+public class AgeInlineCell: Cell<Age>, CellType {
     
     required public init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -208,15 +211,12 @@ public class AgeInlineCell: Cell<String>, CellType {
 }
 
 
-public class _AgeInlineRow: Row<String, AgeInlineCell> {
+public class _AgeInlineRow: Row<Age, AgeInlineCell> {
     
     public typealias InlineRow = AgePickerRow
     public var year_options = [Int]()
     public var month_options = [Int]()
     public var noValueDisplayText: String?
-    
-    var year_value: Int?
-    var month_value: Int?
     
     required public init(tag: String?) {
         super.init(tag: tag)
@@ -226,7 +226,10 @@ public class _AgeInlineRow: Row<String, AgeInlineCell> {
                 return nil
             }
             
-            return date
+            let y = date.year
+            let m = date.month
+            
+            return "\(y) year\(y >= 2 ? "s" : "") and \(m) month\(m >= 2 ? "s" : "") old."
         }
     }
 }
@@ -260,6 +263,17 @@ public final class AgeInlineRow_<T>: _AgeInlineRow, RowType, InlineRowType {
     }
 }
 
-public typealias AgeInlineRow = AgeInlineRow_<String>
+public typealias AgeInlineRow = AgeInlineRow_<Age>
 
+public class Age: Equatable
+{
+    var year:Int = 0
+    var month:Int = 0
+}
+
+public func ==(lhs: Age, rhs: Age) -> Bool
+{
+    //    let result = (lhs.year == rhs.year) && (lhs.month == rhs.month)
+    return false
+}
 
