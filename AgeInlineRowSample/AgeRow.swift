@@ -45,11 +45,11 @@ public class AgePickerCell: Cell<Age>, CellType, UIPickerViewDataSource, UIPicke
         detailTextLabel?.text = nil
         picker.reloadAllComponents()
         if let selectedValue = pickerRow?.value?.year, let index = pickerRow?.year_options.indexOf(selectedValue) {
-            picker.selectRow(index, inComponent: 0, animated: true)
+            picker.selectRow(index, inComponent: 0, animated: false)
         }
         
         if let selectedValue = pickerRow?.value?.month, let index = pickerRow?.month_options.indexOf(selectedValue) {
-            picker.selectRow(index, inComponent: 1, animated: true)
+            picker.selectRow(index, inComponent: 2, animated: false)
         }
         
     }
@@ -143,13 +143,13 @@ public class AgePickerCell: Cell<Age>, CellType, UIPickerViewDataSource, UIPicke
     public func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         
         let value_of_this_class = self.row.value
-        let value_of_pickerRow = pickerRow?.value
+//        let value_of_pickerRow = pickerRow?.value
         
         if component == 0 {
             if let year = pickerRow?.year_options[row] {
                 
-                value_of_pickerRow?.year = year
-                pickerRow?.value = value_of_pickerRow
+//                value_of_pickerRow?.year = year
+//                pickerRow?.value = value_of_pickerRow
                 
                 value_of_this_class?.year = year
                 self.row.value = value_of_this_class
@@ -162,8 +162,8 @@ public class AgePickerCell: Cell<Age>, CellType, UIPickerViewDataSource, UIPicke
         {
             if let month = pickerRow?.month_options[row] {
                 
-                value_of_pickerRow?.month = month
-                pickerRow?.value = value_of_pickerRow
+//                value_of_pickerRow?.month = month
+//                pickerRow?.value = value_of_pickerRow
                 
                 value_of_this_class?.month = month
                 self.row.value = value_of_this_class
